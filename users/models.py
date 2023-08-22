@@ -6,3 +6,4 @@ from django.db import models
 class User(AbstractUser):
     profile_image = models.ImageField(
         "프로필 이미지", upload_to="users/profile", blank=True)
+    nickname = models.CharField(default="user", max_length=20)
