@@ -17,4 +17,4 @@ class Post(models.Model):
     tags = models.CharField("태그", max_length=20, choices=TAG_CHOICE)
 
     def __str__(self):
-        return f"{self.user.nickname}의 글(id : {self.id}"
+        return f"{self.user.nickname}의 글(id : {self.id})"

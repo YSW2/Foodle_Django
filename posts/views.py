@@ -1,11 +1,19 @@
 from django.shortcuts import render, redirect
 from posts.forms import PostForm
+from posts.models import Post
 # Create your views here.
 
 def posts_view(request):
-    return render(request, "posts/posts.html")
+    posts = Post.objects.all()
+    context = {
+        "posts": posts,
+    }
+    return render(request, "posts/posts.html", context)
 
 def post_add(request):
+    if not request.user.is_authenticated:
+        return redirect("users:login")
+
     if request.method == "POST":
         form = PostForm(request.POST)
 
@@ -23,3 +31,10 @@ def post_add(request):
         "form": form
     }
     return render(request, "posts/post_add.html", context)
+
+def post_detail(request, post_id):
+    post = Post.objects.get(id=post_id)
+    context = {
+        "post": post,
+    }
+    return render(request, "posts/post_detail.html", context)
