@@ -1,12 +1,31 @@
 from django.shortcuts import render, redirect
 from posts.forms import PostForm
 from posts.models import Post
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+import random
 # Create your views here.
 
 def posts_view(request):
     posts = Post.objects.all()
+    page = request.GET.get('page')
+
+    paginator = Paginator(posts, 10)
+    custom_page_range = range(((int(page)-1) // 10) * 10 + 1, min(paginator.num_pages, ((int(page)-1) // 10) * 10 + 10) + 1)
+
+    try:
+        page_obj = paginator.page(page)
+    except PageNotAnInteger:
+        page = 1
+        page_obj = paginator.page(page)
+    except EmptyPage:
+        page = paginator.num_pages
+        page_obj = paginator.page(page)
+
     context = {
         "posts": posts,
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "custom_page_range": custom_page_range,
     }
     return render(request, "posts/posts.html", context)
 
@@ -38,3 +57,22 @@ def post_detail(request, post_id):
         "post": post,
     }
     return render(request, "posts/post_detail.html", context)
+
+def generate_post(request):
+    for i in range(100):
+        random_int = random.randint(1, 100)
+        random_post = Post(
+            title=f"게시글 제목 {random_int}",
+            content=f"게시글 내용 {random_int}",
+            tags='all',
+            user=request.user,
+        )
+        random_post.save()
+
+    return redirect("posts:posts")
+
+def delete_all_posts(request):
+    posts = Post.objects.all()
+    posts.delete()
+
+    return redirect("posts:posts")

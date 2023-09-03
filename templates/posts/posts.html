@@ -4,8 +4,34 @@
     <h1>Posts</h1>
     <a href="{% url 'posts:post_add' %}">글쓰기</a>
     <div>
-        {% for post in posts %}
-            <p><a href="{% url 'posts:post_detail' post_id=post.id %}">{{ post.title }}</a></p>
+        {% for post in page_obj %}
+            <p>
+                [ {{ post.tags }} ]
+                <a href="{% url 'posts:post_detail' post_id=post.id %}">{{ post.title }}</a>
+            </p>
         {% endfor %}
+        <br/>
+        <br/>
+        <ul>
+            {% if page_obj.has_other_pages %}
+                {% if page_obj.has_previous %}
+                    <a style="color: blue;" href="?page={{ page_obj.previous_page_number }}">&#10094; Prev</a>
+                {% else %}
+                    &#10094;
+                {% endif %}
+                {% for page in custom_page_range %}
+                    {% if page == page_obj.number %}
+                        <a style="color: red;" href="?page={{ page }}">{{ page }}</a>
+                    {% else %}
+                        <a style="color: blue;" href="?page={{ page }}">{{ page }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <a style="color: blue;" href="?page={{ page_obj.next_page_number }}">Next &#10095;</a>
+                {% else %}
+                    &#10095;
+                {% endif %}
+            {% endif %}
+        </ul>
     </div>
 {% endblock %}
