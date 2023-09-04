@@ -17,7 +17,7 @@
                 {% if page_obj.has_previous %}
                     <a style="color: blue;" href="?page={{ page_obj.previous_page_number }}">&#10094; Prev</a>
                 {% else %}
-                    &#10094;
+                    <span style="color: gray;">&#10094; Prev</span>
                 {% endif %}
                 {% for page in custom_page_range %}
                     {% if page == page_obj.number %}
@@ -29,7 +29,7 @@
                 {% if page_obj.has_next %}
                     <a style="color: blue;" href="?page={{ page_obj.next_page_number }}">Next &#10095;</a>
                 {% else %}
-                    &#10095;
+                    <span style="color: gray;">Next &#10095;</span>
                 {% endif %}
             {% endif %}
         </ul>

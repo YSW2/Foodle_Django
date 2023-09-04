@@ -9,6 +9,9 @@ def posts_view(request):
     posts = Post.objects.all()
     page = request.GET.get('page')
 
+    if page is None:
+        page = 1
+
     paginator = Paginator(posts, 10)
     custom_page_range = range(((int(page)-1) // 10) * 10 + 1, min(paginator.num_pages, ((int(page)-1) // 10) * 10 + 10) + 1)
 
