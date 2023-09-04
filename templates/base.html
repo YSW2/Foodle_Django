@@ -2,17 +2,24 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <meta charset="UTF-8">
     <title>Foodle</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block head %}{% endblock %}
 </head>
 <body>
     <nav>
         <ul>
             <li><a href="/">Home</a></li>
+            {% if user.is_active %}
+                <a href="{% url 'users:logout' %}">로그아웃</a>
+            {% else %}
+                <a href="{% url 'users:login' %}">로그인</a>
+            {% endif %}
         </ul>
     </nav>
-    {% block content %}{% endblock %}
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 </body>
 </html>

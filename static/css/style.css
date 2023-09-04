@@ -1,6 +1,23 @@
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+html {
+  font-family: "Noto Sans KR", serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #333;
+}
+
+main {
+    padding-top: 50px;
+}
 nav {
-    background-color: #333; /* 네비게이션 바 배경색 */
+    background-color: #FDE1B4; /* 네비게이션 바 배경색 */
     color: #fff; /* 텍스트 색상 */
+    position: fixed;
+    top: 0;
+    /* width: 100% */
+    left: 0;
+    right: 0;
+  /* 생략 */
 }
 
 ul {
@@ -15,5 +32,5 @@ li {
 
 a {
     text-decoration: none; /* 링크 밑줄 제거 */
-    color: #fff; /* 링크 텍스트 색상 */
+    color: black;
 }
