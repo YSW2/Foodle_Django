@@ -15,22 +15,26 @@
         <ul>
             {% if page_obj.has_other_pages %}
                 {% if page_obj.has_previous %}
-                    <a style="color: blue;" href="?page={{ page_obj.previous_page_number }}&name={{ request.GET.name }}&keyword={{ request.GET.keyword }}">&#10094; Prev</a>
+                    <a style="color: black;"
+                       href="?page={{ page_obj.previous_page_number }}&name={{ request.GET.name }}&keyword={{ request.GET.keyword }}">&#10094; Prev</a>
                 {% else %}
                     <span style="color: gray;">&#10094; Prev</span>
                 {% endif %}
+
                 {% for page in custom_page_range %}
-                    {% if page == page_obj.number %}
-                        <a style="color: red;" href="?page={{ page }}&name={{ request.GET.name }}&keyword={{ request.GET.keyword }}">{{ page }}</a>
-                    {% else %}
-                        <a style="color: blue;" href="?page={{ page }}&name={{ request.GET.name }}&keyword={{ request.GET.keyword }}">{{ page }}</a>
-                    {% endif %}
+                    <a style="
+                    {% if page == page_obj.number %} color: red;
+                    {% else %} color: black;
+                    {% endif %}" href="?page={{ page }}&name={{ request.GET.name }}&keyword={{ request.GET.keyword }}">{{ page }}</a>
                 {% endfor %}
+
                 {% if page_obj.has_next %}
-                    <a style="color: blue;" href="?page={{ page_obj.next_page_number }}&name={{ request.GET.name }}&keyword={{ request.GET.keyword }}">Next &#10095;</a>
+                    <a style="color: black;"
+                       href="?page={{ page_obj.next_page_number }}&name={{ request.GET.name }}&keyword={{ request.GET.keyword }}">Next &#10095;</a>
                 {% else %}
                     <span style="color: gray;">Next &#10095;</span>
                 {% endif %}
+
             {% endif %}
         </ul>
     </div>

@@ -23,8 +23,10 @@ def posts_view(request):
     if page is None:
         page = 1
 
-    paginator = Paginator(posts, 10)
-    custom_page_range = range(((int(page)-1) // 10) * 10 + 1, min(paginator.num_pages, ((int(page)-1) // 10) * 10 + 10) + 1)
+    page_num = 10
+    paginator = Paginator(posts, page_num)
+
+    custom_page_range = range(((int(page)-1) // page_num) * page_num + 1, min(paginator.num_pages, ((int(page)-1) // page_num) * page_num + page_num) + 1)
 
     try:
         page_obj = paginator.page(page)
