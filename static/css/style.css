@@ -34,3 +34,17 @@ a {
     text-decoration: none; /* 링크 밑줄 제거 */
     color: black;
 }
+
+.post_table{
+    position: mid;
+    width: 70%;
+    margin: 0 auto;
+}
+
+.post_table_list{
+    text-align: center;
+}
+
+.post_table_list_title{
+    text-align: left;
+}

@@ -8,6 +8,11 @@
             {{ post.created }}
         </p>
         <p>{{ post.content }}</p>
+        <p>{{ post.like_users.count }}</p>
     </div>
+    <form action="{% url 'posts:like_this_post' post_id=post.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">좋아요</button>
+    </form>
     <a href="{% url 'posts:posts' %}">목록</a>
 {% endblock %}

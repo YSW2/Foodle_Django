@@ -3,6 +3,7 @@ from posts.forms import PostForm
 from posts.models import Post
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
+from django.views.decorators.http import require_POST
 import random
 # Create your views here.
 
@@ -11,6 +12,11 @@ def posts_view(request):
     name = request.GET.get('name')
     keyword = request.GET.get('keyword')
 
+    page_num = 10   #한 번에 표시할 페이지의 갯수
+
+    if page is None:
+        page = 1
+
     if name == 'title':
         posts = Post.objects.filter(title__icontains=keyword)
     elif name == 'content':
@@ -18,14 +24,9 @@ def posts_view(request):
     elif name == 'title_content':
         posts = Post.objects.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword))
     else:
-        posts = Post.objects.all()
+        posts = Post.objects.order_by('-created')
 
-    if page is None:
-        page = 1
-
-    page_num = 10
     paginator = Paginator(posts, page_num)
-
     custom_page_range = range(((int(page)-1) // page_num) * page_num + 1, min(paginator.num_pages, ((int(page)-1) // page_num) * page_num + page_num) + 1)
 
     try:
@@ -70,10 +71,30 @@ def post_add(request):
 
 def post_detail(request, post_id):
     post = Post.objects.get(id=post_id)
+    user = request.user
+
+    if user.is_authenticated:
+        if not post.views.filter(id=user.id).exists():
+            post.views.add(user)
+
     context = {
         "post": post,
     }
     return render(request, "posts/post_detail.html", context)
+
+@require_POST
+def like_this_post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    user = request.user
+
+    if user.like_posts.filter(id=post_id).exists():
+        user.like_posts.remove(post)
+
+    else:
+        user.like_posts.add(post)
+
+    url_next = request.GET.get("next")
+    return redirect("posts:post_detail", post_id=post.id)
 
 def generate_post(request):
     for i in range(100):

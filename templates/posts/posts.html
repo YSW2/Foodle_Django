@@ -4,12 +4,30 @@
     <h1>Posts</h1>
     <a href="{% url 'posts:post_add' %}">글쓰기</a>
     <div>
-        {% for post in page_obj %}
-            <p>
-                [ {{ post.tags }} ]
-                <a href="{% url 'posts:post_detail' post_id=post.id %}">{{ post.title }}</a>
-            </p>
-        {% endfor %}
+        <table class="post_table">
+            <thead>
+                <tr>
+                    <th>태그</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>등록일</th>
+                    <th>좋아요</th>
+                    <th>조회수</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in page_obj %}
+                    <tr class="post_table_list">
+                        <td>{{ post.tags }}</td>
+                        <td class="post_table_list_title"><a href="{% url 'posts:post_detail' post_id=post.id %}">{{ post.title }}</a></td>
+                        <td>{{ post.user.nickname }}</td>
+                        <td>{{ post.created }}</td>
+                        <td>{{ post.like_users.count }}</td>
+                        <td>{{ post.views.count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         <br/>
         <br/>
         <ul>
