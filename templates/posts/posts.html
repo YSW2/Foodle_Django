@@ -19,9 +19,14 @@
                 {% for post in page_obj %}
                     <tr class="post_table_list">
                         <td>{{ post.tags }}</td>
-                        <td class="post_table_list_title"><a href="{% url 'posts:post_detail' post_id=post.id %}">{{ post.title }}</a></td>
+                        <td class="post_table_list_title">
+                            <a href="{% url 'posts:post_detail' post_id=post.id %}">{{ post.title }}</a>
+                            {% if post.comment_set.all %}
+                                <span style="color: red">[{{ post.comment_set.count }}]</span>
+                            {% endif %}
+                        </td>
                         <td>{{ post.user.nickname }}</td>
-                        <td>{{ post.created }}</td>
+                        <td>{{ post.created|date:'m/d H:i' }}</td>
                         <td>{{ post.like_users.count }}</td>
                         <td>{{ post.views.count }}</td>
                     </tr>

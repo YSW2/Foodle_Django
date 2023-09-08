@@ -2,17 +2,42 @@
 
 {% block content %}
     <div>
-        <h1>{{ post.title }}</h1>
+        <h2>{{ post.title }}</h2>
         <p>
-            {{ post.user.nickname }}
-            {{ post.created }}
+            {{ post.user.nickname }} |
+            {{ post.created|date:'m-d H:i' }} |
+            &#x1f497 {{ post.like_users.count }}
         </p>
         <p>{{ post.content }}</p>
-        <p>{{ post.like_users.count }}</p>
     </div>
     <form action="{% url 'posts:like_this_post' post_id=post.id %}" method="POST">
         {% csrf_token %}
         <button type="submit">좋아요</button>
     </form>
+    <div>
+        <form action="{% url 'posts:comment_add' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="post" value="{{ post.id }}">
+            {{ comment_form.content }}
+            <button type="submit">게시</button>
+        </form>
+        <form action="{% url 'posts:post_delete' post_id=post.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">삭제</button>
+        </form>
+    </div>
+    <div>
+        <ul>
+            {% for comment in post.comment_set.all %}
+                <li class="comment_li">
+                    &#8618; {{ comment.user.username }} | {{ comment.content }}
+                    <form action="{% url 'posts:comment_delete' comment_id=comment.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">삭제</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
     <a href="{% url 'posts:posts' %}">목록</a>
 {% endblock %}

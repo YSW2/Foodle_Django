@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
-from posts.forms import PostForm
-from posts.models import Post
+from django.http import HttpResponseForbidden
+from django.contrib import messages
+from posts.forms import PostForm, CommentForm
+from posts.models import Post, Comment
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.views.decorators.http import require_POST
@@ -18,11 +20,11 @@ def posts_view(request):
         page = 1
 
     if name == 'title':
-        posts = Post.objects.filter(title__icontains=keyword)
+        posts = Post.objects.filter(title__icontains=keyword).order_by('-created')
     elif name == 'content':
-        posts = Post.objects.filter(content__icontains=keyword)
+        posts = Post.objects.filter(content__icontains=keyword).order_by('-created')
     elif name == 'title_content':
-        posts = Post.objects.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword))
+        posts = Post.objects.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword)).order_by('-created')
     else:
         posts = Post.objects.order_by('-created')
 
@@ -69,6 +71,41 @@ def post_add(request):
     }
     return render(request, "posts/post_add.html", context)
 
+@require_POST
+def post_delete(request, post_id):
+    post = Post.objects.get(id=post_id)
+
+    if post.user == request.user:
+        post.delete()
+
+    else:
+        HttpResponseForbidden("삭제 권한이 없습니다")
+
+    return redirect("posts:posts")
+
+@require_POST
+def comment_add(request):
+    if not request.user.is_authenticated:
+        return redirect("users:login")
+
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.user = request.user
+        comment.save()
+
+        return redirect("posts:post_detail", post_id=comment.post.id)
+
+@require_POST
+def comment_delete(request, comment_id):
+    comment = Comment.objects.get(id=comment_id)
+    user = request.user
+
+    if comment.user == user:
+        comment.delete()
+
+    return redirect("posts:post_detail", post_id=comment.post.id)
+
 def post_detail(request, post_id):
     post = Post.objects.get(id=post_id)
     user = request.user
@@ -77,8 +114,11 @@ def post_detail(request, post_id):
         if not post.views.filter(id=user.id).exists():
             post.views.add(user)
 
+    comment_form = CommentForm()
+
     context = {
         "post": post,
+        "comment_form": comment_form,
     }
     return render(request, "posts/post_detail.html", context)
 
