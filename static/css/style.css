@@ -54,3 +54,29 @@ a {
 .post_table_list_title{
     text-align: left;
 }
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: -300px; /* 오른쪽에서 시작 */
+    width: 300px;
+    height: 100%;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: right 0.3s ease-in-out;
+}
+
+/* 버튼 스타일 */
+.open-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+/* 버튼 클릭 시 대화창을 오른쪽에서 나오도록 설정 */
+.open-button:focus + .modal {
+    right: 0;
+}

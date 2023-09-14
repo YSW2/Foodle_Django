@@ -1,5 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>MyFridge</h1>
+<h1>{{ user.nickname }}의 냉장고</h1>
+<div>
+    <h3>음식 목록</h3>
+    <ul>
+        {% if fridge %}
+            <li>
+                {% for fridge_list in fridge %}
+                    <span>{{ fridge_list.name }}</span>
+                    <span>{{ fridge_list.exp_date|date:'y-m-d' }}</span>
+                    <form action="{% url 'fridge:fridge_delete' fridge_id=fridge_list.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">삭제</button>
+                    </form>
+                {% endfor %}
+            </li>
+        {% else %}
+            <p>냉장고가 비어있습니다</p>
+        {% endif %}
+    </ul>
+</div>
+<div>
+    <h3>음식 추가</h3>
+    <form action="{% url 'fridge:fridge_add' %}" method="POST">
+        {% csrf_token %}
+        {{ fridge_form.as_p }}
+        <button type="submit">추가</button>
+    </form>
+</div>
+<button class="open-button">왼쪽화살표</button>
+<div class="modal">
+    <!-- 대화창 내용 -->
+    <h2>대화창 제목</h2>
+    <p>대화창 내용을 여기에 넣으세요.</p>
+    <button>닫기</button>
+</div>
 {% endblock %}

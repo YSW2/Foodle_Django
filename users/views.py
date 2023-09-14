@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from users.forms import LoginForm, SignupForm
+from fridge.models import Fridge
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 # Create your views here.
@@ -39,6 +40,8 @@ def signup_view(request):
 
         if form.is_valid():
             user = form.save()
+            fridge = Fridge(user=user)
+            fridge.save()
             return redirect("users:login")
 
         else:
