@@ -56,7 +56,6 @@ a {
 }
 
 .modal {
-    display: none;
     position: fixed;
     top: 0;
     right: -300px; /* 오른쪽에서 시작 */
@@ -79,4 +78,52 @@ a {
 /* 버튼 클릭 시 대화창을 오른쪽에서 나오도록 설정 */
 .open-button:focus + .modal {
     right: 0;
+}
+
+#modalContainer {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#modalContent {
+  position: absolute;
+  background-color: #ffffff;
+  width: 300px;
+  height: 150px;
+  padding: 15px;
+}
+
+#modalContainer.hidden {
+  display: none;
+}
+.hidden {
+    display: none;
+}
+
+#loading-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

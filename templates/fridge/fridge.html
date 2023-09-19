@@ -23,17 +23,83 @@
 </div>
 <div>
     <h3>음식 추가</h3>
+    <input type="button" class="barcode" value="바코드">
     <form action="{% url 'fridge:fridge_add' %}" method="POST">
         {% csrf_token %}
-        {{ fridge_form.as_p }}
+        <input type="text" name="name" class="food">
+        <input type="date" name="exp_date" class="date">
         <button type="submit">추가</button>
     </form>
 </div>
-<button class="open-button">왼쪽화살표</button>
-<div class="modal">
-    <!-- 대화창 내용 -->
-    <h2>대화창 제목</h2>
-    <p>대화창 내용을 여기에 넣으세요.</p>
-    <button>닫기</button>
+<div>
+    <h3>AI 추천</h3>
+    <input type="button" class="ai" value="AI 추천">
+    <div id="loading-spinner" class="hidden">
+    <!-- 로딩 원 스타일링 -->
+        <div class="spinner"></div>
+    </div>
+    <textarea class="recipe"></textarea>
 </div>
+{% endblock %}
+{% block script %}
+<script>
+    let barcode = document.querySelector('.barcode');
+    let food = document.querySelector('.food');
+    let date = document.querySelector('.date');
+    barcode.addEventListener('click', e => {
+        $.ajax({
+            url: '{% url 'fridge:barcode' %}',
+            type: 'POST',
+            headers: {
+               'X-CSRFTOKEN' : '{{ csrf_token }}'
+            },
+            success: function(data){
+                food.value = data.value
+            },
+            error: function(xhr, textStatus, errorThrown){
+                alert(errorThrown);
+            }
+        });
+    });
+</script>
+<script>
+    let startAi = document.querySelector('.ai');
+    let getRecipe = document.querySelector('.recipe');
+
+    // Ajax 요청 전에 로딩 원을 표시하는 함수
+    function showLoadingSpinner() {
+        document.getElementById('loading-spinner').classList.remove('hidden');
+    }
+
+    // Ajax 요청 완료 후 로딩 원을 숨기는 함수
+    function hideLoadingSpinner() {
+        document.getElementById('loading-spinner').classList.add('hidden');
+    }
+
+    startAi.addEventListener('click', e => {
+        $.ajax({
+            url: '{% url 'fridge:get_recipe' %}',
+            type: 'POST',
+            headers: {
+               'X-CSRFTOKEN' : '{{ csrf_token }}'
+            },
+            beforeSend: function() {
+                // Ajax 요청 전에 로딩 원 표시
+                showLoadingSpinner();
+            },
+            success: function(data){
+                getRecipe.value = data.recipe
+
+                getRecipe.style.width = '100%';
+                getRecipe.style.height = 'auto'; // 높이 초기화
+                getRecipe.style.height = (getRecipe.scrollHeight) + 'px'; // 내용물 높이에 맞게 설정
+
+                hideLoadingSpinner();
+            },
+            error: function(xhr, textStatus, errorThrown){
+                alert(errorThrown);
+            }
+        });
+    });
+</script>
 {% endblock %}
