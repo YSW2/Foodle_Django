@@ -4,22 +4,26 @@
 <h1>{{ user.nickname }}의 냉장고</h1>
 <div>
     <h3>음식 목록</h3>
-    <ul>
+    <table class="fridge_table">
         {% if fridge %}
-            <li>
+            <tbody>
                 {% for fridge_list in fridge %}
-                    <span>{{ fridge_list.name }}</span>
-                    <span>{{ fridge_list.exp_date|date:'y-m-d' }}</span>
-                    <form action="{% url 'fridge:fridge_delete' fridge_id=fridge_list.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit">삭제</button>
-                    </form>
+                <tr class="fridge_table_list">
+                    <td>{{ fridge_list.name }}</td>
+                    <td style="{% if fridge_list.danger_mode %} color: red; {% endif %}">{% if fridge_list.exp_date_exist %}{{ fridge_list.exp_date|date:'y-m-d' }}{% endif %}</td>
+                    <td>
+                        <form action="{% url 'fridge:fridge_delete' fridge_id=fridge_list.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit">삭제</button>
+                        </form>
+                    </td>
+                </tr>
                 {% endfor %}
-            </li>
+            </tbody>
         {% else %}
             <p>냉장고가 비어있습니다</p>
         {% endif %}
-    </ul>
+    </table>
 </div>
 <div>
     <h3>음식 추가</h3>

@@ -7,13 +7,22 @@ from django.views.decorators.http import require_POST
 from fridge import barcode, getinfo
 from bs4 import BeautifulSoup
 from fridge import openai_api
+from datetime import datetime
 import json
 # Create your views here.
 
+
 def fridge_view(request):
+    today = int(datetime.now().strftime("%d"))
     user = request.user
-    fridge = Fridge.objects.filter(user=user)
+    fridge = Fridge.objects.filter(user=user).order_by('exp_date')
     fridge_form = FridgeForm()
+
+    for f in fridge:
+        if f.exp_date and f.exp_date.day - today < 1:
+            f.danger_mode = True
+        else:
+            f.danger_mode = False
 
     context = {
         "fridge": fridge,
@@ -24,11 +33,12 @@ def fridge_view(request):
 @require_POST
 def fridge_add(request):
     form = FridgeForm(request.POST)
-    print(request.POST)
 
     if form.is_valid():
-        print(form)
         fridge = form.save(commit=False)
+        if fridge.exp_date is None:
+            fridge.exp_date_exist = False
+            fridge.exp_date = datetime(9999, 12, 31)
         fridge.user = request.user
         fridge.save()
     else:
@@ -46,23 +56,17 @@ def fridge_delete(request, fridge_id):
 
 async def get_recipe(request):
     user = request.user
-    bot = openai_api.openai_bot()
     food_list = Fridge.objects.filter(user=user).values_list('name')
     food_query = ''
     for food in food_list:
         food_query += food[0]
 
-    recipe = await bot.getquery(f"{food_query} 이 식재료들로 만들 음식 레시피 한개 알려줘. 모든 재료를 사용할 필요는 없어.")
+    recipe = await openai_api.chat_bard(f"{food_query} 중에서 몇 가지를 골라 만들 수 있는 음식 레시피 한 개 검색해줘")
     print(recipe)
     context = {
         "recipe": recipe,
     }
     return JsonResponse(context)
-
-def test(request):
-    jsonObject = json.loads(request.body)
-    print(jsonObject.get('title'))
-    return JsonResponse(jsonObject)
 
 def barcode_scan(request):
     code = barcode.scanning()

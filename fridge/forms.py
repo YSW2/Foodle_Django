@@ -21,3 +21,9 @@ class FridgeForm(forms.ModelForm):
                 }
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(FridgeForm, self).__init__(*args, **kwargs)
+
+        # 'name' 필드를 필수 필드로 설정
+        self.fields['exp_date'].required = False
