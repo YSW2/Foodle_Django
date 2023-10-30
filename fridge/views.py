@@ -70,22 +70,23 @@ async def get_recipe(request):
 
 def barcode_scan(request):
     code = barcode.scanning()
-    # code = '5000394123618'
     html_content = getinfo.getname(code)
 
-    soup = BeautifulSoup(html_content, 'html.parser')
-
-    # 상품명 추출
-    product_name = soup.find('h3').text.strip()
-
-    # 결과 출력
-    print("상품명:", product_name)
-
-    if product_name == "":
-        return HttpResponseServerError("인식이 불가한 상품입니다")
-
+    if html_content:
+        soup = BeautifulSoup(html_content, 'html.parser')
+        # 상품명 추출
+        product_name = soup.find('h3').text.strip()
+        if product_name:
+            # 결과 출력
+            print("상품명:", product_name)
+            context = {
+                "value": product_name,
+            }
+            return JsonResponse(context)
+        else:
+            print("상품 스캔 실패")
+            msg = "존재하지 않는 상품입니다."
+            return HttpResponseServerError(msg)
     else:
-        context = {
-            "value": product_name,
-        }
-    return JsonResponse(context)
+        msg = "스캔에 실패하였습니다."
+        return HttpResponseServerError(msg)
