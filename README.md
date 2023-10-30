@@ -2,13 +2,11 @@
 
 ## Project Obj.
 
----
 팀 프로젝트인 Foodle을 Django Framework 학습 겸 리빌딩해서 완성도를 올리고 구조를 최적화하기.
 
 
 ## Project Tools.
 
----
 - Python
 - Django Framework
 - SQLite
@@ -17,7 +15,6 @@
 
 ## Project Features.
 
----
 - User 회원가입 및 로그인 기능
 - 게시판을 이용한 CRUD 기능
   - 페이징 기능
